@@ -22,10 +22,19 @@ class SecurityConfig(
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
+                // Endpoints públicos
                 auth.requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/ventas/**").hasAnyRole("admin", "marketing", "operaciones")
-                    .requestMatchers("/api/productos/**").hasAnyRole("admin", "marketing", "operaciones")
-                    .anyRequest().authenticated()
+                auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                // Endpoints de negocio (requieren autenticación con roles)
+                auth.requestMatchers("/api/ventas/**").hasAnyRole("admin", "marketing", "operaciones")
+                auth.requestMatchers("/api/productos/**").hasAnyRole("admin", "marketing", "operaciones")
+                auth.requestMatchers("/api/reportes/**").hasAnyRole("admin", "marketing", "operaciones")
+                auth.requestMatchers("/api/catalogos/**").hasAnyRole("admin", "marketing", "operaciones")
+                auth.requestMatchers("/api/personas/**").hasAnyRole("admin", "marketing", "operaciones")
+
+                // Todo lo demás requiere autenticación
+                auth.anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
