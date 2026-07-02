@@ -27,14 +27,14 @@ data class Persona(
     val direccion: String? = null,
 
     @Column(nullable = false, columnDefinition = "CHAR(1)")
-    val tipo: Char,
+    var tipo: Char,   // ← cambiamos a var
 
     @Column(name = "password_hash", columnDefinition = "TEXT")
-    val passwordHash: String? = null,
+    var passwordHash: String? = null,   // ← cambiamos a var
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rol")
-    val rol: RolUsuario? = null,
+    var rol: RolUsuario? = null,   // ← cambiamos a var
 
     @Column(name = "total_compras", precision = 12, scale = 2)
     val totalCompras: BigDecimal? = BigDecimal.ZERO,
