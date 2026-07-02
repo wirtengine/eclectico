@@ -1,7 +1,9 @@
 package com.eclectico.backend.controller
 
-import com.eclectico.backend.entity.Producto
+import com.eclectico.backend.dto.ProductoRequest
+import com.eclectico.backend.dto.ProductoResponse
 import com.eclectico.backend.service.ProductoService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -9,13 +11,13 @@ import org.springframework.web.bind.annotation.*
 class ProductoController(private val productoService: ProductoService) {
 
     @GetMapping
-    fun listarDisponibles(): List<Producto> = productoService.listarDisponibles()
+    fun listarDisponibles(): List<ProductoResponse> = productoService.listarDisponibles()
 
     @GetMapping("/{codigo}")
-    fun obtenerPorCodigo(@PathVariable codigo: String): Producto? =
+    fun obtenerPorCodigo(@PathVariable codigo: String): ProductoResponse? =
         productoService.buscarPorCodigo(codigo)
 
     @PostMapping
-    fun crearProducto(@RequestBody producto: Producto): Producto =
-        productoService.guardar(producto)
+    fun crearProducto(@Valid @RequestBody request: ProductoRequest): ProductoResponse =
+        productoService.guardar(request)
 }
