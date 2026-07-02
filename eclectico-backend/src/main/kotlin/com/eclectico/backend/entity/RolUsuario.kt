@@ -1,9 +1,11 @@
 package com.eclectico.backend.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.*
 
 @Entity
 @Table(name = "rol_usuario")
+@JsonIgnoreProperties(value = ["hibernateLazyInitializer", "handler"])
 data class RolUsuario(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

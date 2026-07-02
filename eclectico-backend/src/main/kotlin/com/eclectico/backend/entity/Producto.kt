@@ -1,7 +1,9 @@
 package com.eclectico.backend.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
 import java.math.BigDecimal
+import java.sql.Types
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -61,7 +63,7 @@ data class Producto(
     val fechaVenta: LocalDate? = null,
 
     @Column(name = "dias_para_rebaja")
-    val diasParaRebaja: Int? = 10,
+    val diasParaRebaja: Short? = 10,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor")
@@ -70,8 +72,9 @@ data class Producto(
     @Column(name = "imagen_principal", columnDefinition = "TEXT")
     val imagenPrincipal: String? = null,
 
-    @Column(name = "imagenes", columnDefinition = "TEXT[]")
-    val imagenes: Array<String>? = null, // PostgreSQL array
+    @JdbcTypeCode(Types.ARRAY)
+    @Column(name = "imagenes", columnDefinition = "text[]")
+    val imagenes: List<String>? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creado_por")

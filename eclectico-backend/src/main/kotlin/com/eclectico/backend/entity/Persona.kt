@@ -1,5 +1,6 @@
 package com.eclectico.backend.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -7,6 +8,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "persona")
+@JsonIgnoreProperties(value = ["hibernateLazyInitializer", "handler"])
 data class Persona(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +27,7 @@ data class Persona(
     val direccion: String? = null,
 
     @Column(nullable = false, columnDefinition = "CHAR(1)")
-    val tipo: Char,  // 'C', 'S', 'R'
+    val tipo: Char,
 
     @Column(name = "password_hash", columnDefinition = "TEXT")
     val passwordHash: String? = null,

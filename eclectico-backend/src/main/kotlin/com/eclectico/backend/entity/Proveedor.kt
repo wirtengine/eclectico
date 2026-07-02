@@ -1,10 +1,12 @@
 package com.eclectico.backend.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.*
 import java.time.LocalDate
 
 @Entity
 @Table(name = "proveedor")
+@JsonIgnoreProperties(value = ["hibernateLazyInitializer", "handler"])
 data class Proveedor(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +24,5 @@ data class Proveedor(
     @Column(name = "fecha_ultima_visita")
     val fechaUltimaVisita: LocalDate? = null,
 
-    val calificacion: Int? = null
+    val calificacion: Short? = null
 )
