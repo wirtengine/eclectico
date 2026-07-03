@@ -22,18 +22,38 @@ class SecurityConfig(
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
-                // Endpoints públicos
+                // 1. Endpoints públicos
                 auth.requestMatchers("/api/auth/**").permitAll()
                 auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                // Endpoints de negocio (requieren autenticación con roles)
+                // 2. Búsquedas específicas (deben ir antes de las reglas generales)
+                auth.requestMatchers("/api/productos/buscar").hasAnyRole("admin", "marketing", "operaciones")
+                auth.requestMatchers("/api/personas/buscar").hasAnyRole("admin", "marketing", "operaciones")
+
+                // 3. Rutas generales de negocio
                 auth.requestMatchers("/api/ventas/**").hasAnyRole("admin", "marketing", "operaciones")
                 auth.requestMatchers("/api/productos/**").hasAnyRole("admin", "marketing", "operaciones")
                 auth.requestMatchers("/api/reportes/**").hasAnyRole("admin", "marketing", "operaciones")
                 auth.requestMatchers("/api/catalogos/**").hasAnyRole("admin", "marketing", "operaciones")
                 auth.requestMatchers("/api/personas/**").hasAnyRole("admin", "marketing", "operaciones")
 
-                // Todo lo demás requiere autenticación
+                // 4. Gestión de socios (si se implementa más adelante)
+                auth.requestMatchers("/api/personas/socios/**").hasRole("admin")
+
+                // 5. Paramétricas (solo administradores)
+                auth.requestMatchers("/api/lineas/**").hasRole("admin")
+                auth.requestMatchers("/api/metodos-pago/**").hasRole("admin")
+                auth.requestMatchers("/api/estados-producto/**").hasRole("admin")
+                auth.requestMatchers("/api/roles/**").hasRole("admin")
+
+                // 6. Otras secciones administrativas
+                auth.requestMatchers("/api/proveedores/**").hasRole("admin")
+                auth.requestMatchers("/api/gastos/**").hasAnyRole("admin", "operaciones")
+                auth.requestMatchers("/api/notificaciones/**").hasAnyRole("admin", "marketing")
+                auth.requestMatchers("/api/auditoria/**").hasRole("admin")
+                auth.requestMatchers("/api/configuracion/**").hasRole("admin")
+
+                // 7. Cualquier otra petición requiere autenticación
                 auth.anyRequest().authenticated()
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)

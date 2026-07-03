@@ -13,16 +13,16 @@ data class Proveedor(
     val idProveedor: Int? = null,
 
     @Column(nullable = false, length = 100)
-    val nombre: String,
+    var nombre: String,
 
     @Column(length = 15)
-    val telefono: String? = null,
+    var telefono: String? = null,
 
     @Column(columnDefinition = "TEXT")
-    val ubicacion: String? = null,
+    var ubicacion: String? = null,
 
     @Column(name = "fecha_ultima_visita")
-    val fechaUltimaVisita: LocalDate? = null,
+    var fechaUltimaVisita: LocalDate? = null,
 
-    val calificacion: Short? = null
+    var calificacion: Short? = null
 )

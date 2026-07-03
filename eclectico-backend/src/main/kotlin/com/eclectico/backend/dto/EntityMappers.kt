@@ -7,7 +7,7 @@ fun Producto.toResponse(): ProductoResponse {
         idProducto = this.idProducto!!,
         codigo = this.codigo ?: "",
         descripcion = this.descripcion,
-        linea = this.linea?.nombre ?: "",
+        linea = this.linea?.nombre ?: "",   // Si línea es obligatorio, puedes quitarlo ?. y ?:
         costo = this.costo,
         precioVenta = this.precioVenta,
         precioInicial = this.precioInicial ?: this.precioVenta,
@@ -34,6 +34,7 @@ fun Persona.toResponse(): PersonaResponse {
         nombre = this.nombre,
         telefono = this.telefono,
         email = this.email,
+        direccion = this.direccion,
         tipo = this.tipo,
         totalCompras = this.totalCompras,
         numCompras = this.numCompras,
@@ -73,6 +74,13 @@ fun Proveedor.toResponse(): ProveedorResponse {
 fun MetodoPago.toResponse(): MetodoPagoResponse {
     return MetodoPagoResponse(
         idMetodo = this.idMetodo!!,
+        nombre = this.nombre
+    )
+}
+
+fun RolUsuario.toResponse(): RolUsuarioResponse {
+    return RolUsuarioResponse(
+        idRol = this.idRol!!,
         nombre = this.nombre
     )
 }

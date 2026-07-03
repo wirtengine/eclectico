@@ -12,7 +12,7 @@ data class Linea(
     val idLinea: Int? = null,
 
     @Column(nullable = false, unique = true, length = 20)
-    val nombre: String,
+    var nombre: String,
 
-    val descripcion: String? = null
+    var descripcion: String? = null
 )

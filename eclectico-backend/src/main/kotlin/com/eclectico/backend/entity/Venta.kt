@@ -33,7 +33,7 @@ data class Venta(
     val metodoPago: MetodoPago? = null,
 
     @Column(name = "estado_entrega", length = 20)
-    val estadoEntrega: String? = "Pendiente",
+    var estadoEntrega: String? = "Pendiente",   // ← ahora es var
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendedor")

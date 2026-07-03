@@ -16,42 +16,42 @@ data class Producto(
     val idProducto: UUID? = null,
 
     @Column(nullable = false, unique = true, length = 10)
-    val codigo: String? = null, // generado por trigger
+    val codigo: String? = null, // generado por trigger, no se modifica
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    val descripcion: String,
+    var descripcion: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_linea", nullable = false)
-    val linea: Linea,
+    var linea: Linea,
 
     @Column(nullable = false, precision = 10, scale = 2)
-    val costo: BigDecimal,
+    var costo: BigDecimal,
 
     @Column(name = "precio_venta", nullable = false, precision = 10, scale = 2)
-    val precioVenta: BigDecimal,
+    var precioVenta: BigDecimal,
 
     @Column(name = "precio_inicial", nullable = false, precision = 10, scale = 2)
-    val precioInicial: BigDecimal? = null,
+    val precioInicial: BigDecimal? = null, // no se modifica, se mantiene original
 
     @Column(length = 10)
-    val talla: String? = null,
+    var talla: String? = null,
 
     @Column(columnDefinition = "TEXT")
-    val medidas: String? = null,
+    var medidas: String? = null,
 
     @Column(length = 30)
-    val color: String? = null,
+    var color: String? = null,
 
     @Column(name = "marca_original", length = 100)
-    val marcaOriginal: String? = null,
+    var marcaOriginal: String? = null,
 
     @Column(name = "estado_notas", columnDefinition = "TEXT")
-    val estadoNotas: String? = null,
+    var estadoNotas: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_estado", nullable = false)
-    val estado: EstadoProducto,
+    var estado: EstadoProducto, // el estado no se modifica directamente en actualizarProducto
 
     @Column(name = "fecha_compra")
     val fechaCompra: LocalDate? = LocalDate.now(),
@@ -67,14 +67,14 @@ data class Producto(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor")
-    val proveedor: Proveedor? = null,
+    var proveedor: Proveedor? = null,
 
     @Column(name = "imagen_principal", columnDefinition = "TEXT")
-    val imagenPrincipal: String? = null,
+    var imagenPrincipal: String? = null,
 
     @JdbcTypeCode(Types.ARRAY)
     @Column(name = "imagenes", columnDefinition = "text[]")
-    val imagenes: List<String>? = null,
+    var imagenes: List<String>? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creado_por")

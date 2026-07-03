@@ -2,13 +2,19 @@ package com.eclectico.backend.service
 
 import com.eclectico.backend.dto.*
 import com.eclectico.backend.repository.ReporteRepository
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.UUID
 
 @Service
-class ReporteService(private val reporteRepository: ReporteRepository) {
+class ReporteService(
+    private val reporteRepository: ReporteRepository,
+    @PersistenceContext private val entityManager: EntityManager  // Inyectamos EntityManager
+) {
+
 
     fun inventarioDisponible(): List<InventarioDisponibleResponse> {
         return reporteRepository.inventarioDisponible().map { row ->
@@ -43,7 +49,7 @@ class ReporteService(private val reporteRepository: ReporteRepository) {
                 costo = row[7] as BigDecimal,
                 margen = row[8] as BigDecimal,
                 precioOfertaSugerido = row[9] as BigDecimal,
-                descuentoPct = row[13] as BigDecimal,  // descuento_pct
+                descuentoPct = row[13] as BigDecimal,
                 imagenPrincipal = row[10] as String?,
                 estadoNotas = row[11] as String?,
                 fechaPublicacion = (row[12] as? java.sql.Date)?.toLocalDate()
@@ -76,4 +82,51 @@ class ReporteService(private val reporteRepository: ReporteRepository) {
     }
 
     fun refrescarKpis() = reporteRepository.refrescarKpis()
+
+    // ---------- NUEVOS MÉTODOS ----------
+    fun ventasPorProducto(): List<Map<String, Any?>> {
+        val sql = """
+            SELECT p.codigo, p.descripcion, COUNT(dv.id_detalle) as cantidad, 
+                   SUM(dv.precio_venta_real) as ingreso_total,
+                   SUM(dv.precio_venta_real - p.costo) as margen_total
+            FROM detalle_venta dv
+            JOIN producto p ON dv.id_producto = p.id_producto
+            GROUP BY p.id_producto, p.codigo, p.descripcion
+            ORDER BY cantidad DESC
+        """.trimIndent()
+        val query = entityManager.createNativeQuery(sql)
+        @Suppress("UNCHECKED_CAST")
+        val rows = query.resultList as List<Array<Any>>
+        return rows.map { row ->
+            mapOf(
+                "codigo" to row[0],
+                "descripcion" to row[1],
+                "cantidad" to (row[2] as Number).toLong(),
+                "ingresoTotal" to row[3],
+                "margenTotal" to row[4]
+            )
+        }
+    }
+
+    fun clientesVIP(): List<Map<String, Any?>> {
+        val sql = """
+            SELECT p.nombre, p.email, p.telefono, p.total_compras, p.num_compras, p.ultima_compra
+            FROM persona p
+            WHERE p.segmento = 'V'
+            ORDER BY p.total_compras DESC
+        """.trimIndent()
+        val query = entityManager.createNativeQuery(sql)
+        @Suppress("UNCHECKED_CAST")
+        val rows = query.resultList as List<Array<Any>>
+        return rows.map { row ->
+            mapOf(
+                "nombre" to row[0],
+                "email" to row[1],
+                "telefono" to row[2],
+                "totalCompras" to row[3],
+                "numCompras" to row[4],
+                "ultimaCompra" to row[5]
+            )
+        }
+    }
 }

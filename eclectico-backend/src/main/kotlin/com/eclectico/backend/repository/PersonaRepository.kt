@@ -7,4 +7,11 @@ import java.util.UUID
 interface PersonaRepository : JpaRepository<Persona, UUID> {
     fun findByEmail(email: String): Persona?
     fun findByTelefono(telefono: String): Persona?
+    fun findAllByTipo(tipo: Char): List<Persona>
+
+    fun findByTipoAndNombreContainingIgnoreCaseOrTelefonoContaining(
+        tipo: Char,
+        nombre: String,
+        telefono: String
+    ): List<Persona>
 }

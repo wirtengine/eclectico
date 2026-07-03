@@ -27,5 +27,6 @@ data class ProductoRequest(
     val estadoNotas: String? = null,
     val idProveedor: Int? = null,
     val imagenPrincipal: String? = null,
-    val imagenes: List<String>? = null
+    val imagenes: List<String>? = null,
+    val idEstado: Int? = null
 )

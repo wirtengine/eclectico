@@ -9,6 +9,7 @@ data class PersonaResponse(
     val nombre: String,
     val telefono: String?,
     val email: String?,
+    val direccion: String?,
     val tipo: Char,
     val totalCompras: BigDecimal?,
     val numCompras: Int?,

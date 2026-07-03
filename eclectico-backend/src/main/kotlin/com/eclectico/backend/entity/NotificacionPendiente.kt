@@ -24,5 +24,5 @@ data class NotificacionPendiente(
     @Column(name = "creado_en")
     val creadoEn: LocalDateTime? = LocalDateTime.now(),
 
-    val enviado: Boolean? = false
+    var enviado: Boolean? = false
 )

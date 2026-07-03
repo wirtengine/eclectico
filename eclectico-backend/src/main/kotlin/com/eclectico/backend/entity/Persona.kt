@@ -15,26 +15,26 @@ data class Persona(
     val idPersona: UUID? = null,
 
     @Column(nullable = false, length = 100)
-    val nombre: String,
+    var nombre: String,                    // ← ahora var
 
     @Column(unique = true, length = 15)
-    val telefono: String? = null,
+    var telefono: String? = null,          // ← ahora var
 
     @Column(unique = true, length = 100)
-    val email: String? = null,
+    var email: String? = null,             // ← ahora var
 
     @Column(length = 250)
-    val direccion: String? = null,
+    var direccion: String? = null,         // ← ahora var
 
     @Column(nullable = false, columnDefinition = "CHAR(1)")
-    var tipo: Char,   // ← cambiamos a var
+    var tipo: Char,
 
     @Column(name = "password_hash", columnDefinition = "TEXT")
-    var passwordHash: String? = null,   // ← cambiamos a var
+    var passwordHash: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_rol")
-    var rol: RolUsuario? = null,   // ← cambiamos a var
+    var rol: RolUsuario? = null,
 
     @Column(name = "total_compras", precision = 12, scale = 2)
     val totalCompras: BigDecimal? = BigDecimal.ZERO,

@@ -11,24 +11,24 @@ import java.util.UUID
 data class Gasto(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val idGasto: UUID? = null,
+    var idGasto: UUID? = null,
 
     @Column(nullable = false)
-    val fecha: LocalDate? = LocalDate.now(),
+    var fecha: LocalDate? = LocalDate.now(),
 
     @Column(nullable = false, length = 200)
-    val concepto: String,
+    var concepto: String,
 
     @Column(nullable = false, precision = 10, scale = 2)
-    val monto: BigDecimal,
+    var monto: BigDecimal,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_socio")
-    val socio: Persona? = null,
+    var socio: Persona? = null,
 
     @Column(name = "comprobante_url", columnDefinition = "TEXT")
-    val comprobanteUrl: String? = null,
+    var comprobanteUrl: String? = null,
 
     @Column(name = "creado_en")
-    val creadoEn: LocalDateTime? = LocalDateTime.now()
+    var creadoEn: LocalDateTime? = LocalDateTime.now()
 )

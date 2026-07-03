@@ -22,23 +22,19 @@ class VentaService(
 
     @Transactional
     fun crearVenta(request: VentaRequest): VentaResponse {
-        // 1. Validar cliente
         val cliente = personaRepository.findById(request.idCliente)
             .orElseThrow { VentaException("Cliente no encontrado") }
         if (cliente.tipo != 'C') throw VentaException("La persona no es un cliente")
 
-        // 2. Validar vendedor (opcional)
         val vendedor = request.idVendedor?.let {
             personaRepository.findById(it)
                 .orElseThrow { VentaException("Vendedor no encontrado") }
                 .also { if (it.tipo != 'S') throw VentaException("El vendedor no es un socio") }
         }
 
-        // 3. Validar método de pago
         val metodoPago = metodoPagoRepository.findById(request.idMetodoPago)
             .orElseThrow { VentaException("Método de pago no válido") }
 
-        // 4. Validar productos y calcular totales
         val productos = mutableListOf<Producto>()
         var montoTotal = BigDecimal.ZERO
         var costoTotal = BigDecimal.ZERO
@@ -46,7 +42,7 @@ class VentaService(
         for (detalleReq in request.detalles) {
             val producto = productoRepository.findById(detalleReq.idProducto)
                 .orElseThrow { VentaException("Producto no encontrado: ${detalleReq.idProducto}") }
-            if (producto.estado?.idEstado != 1) { // 1 = Disponible
+            if (producto.estado?.idEstado != 1) {
                 throw VentaException("Producto no disponible: ${producto.codigo}")
             }
             montoTotal += detalleReq.precioVentaReal
@@ -54,7 +50,6 @@ class VentaService(
             productos.add(producto)
         }
 
-        // 5. Crear y guardar la venta (los triggers se encargarán de actualizar segmento del cliente)
         val venta = Venta(
             cliente = cliente,
             vendedor = vendedor,
@@ -66,7 +61,6 @@ class VentaService(
         )
         val ventaGuardada = ventaRepository.save(venta)
 
-        // 6. Insertar los detalles (el trigger vender_producto() actualizará cada producto a 'Vendido')
         val detalles = request.detalles.mapIndexed { index, detalleReq ->
             DetalleVenta(
                 venta = ventaGuardada,
@@ -77,10 +71,31 @@ class VentaService(
         }
         detalleVentaRepository.saveAll(detalles)
 
-        // 7. Construir y devolver la respuesta
         return construirRespuesta(ventaGuardada, detalles)
     }
 
+    // ---------- NUEVOS MÉTODOS ----------
+    fun listarTodas(): List<VentaResponse> = ventaRepository.findAll().map { venta ->
+        val detalles = detalleVentaRepository.findAllByVentaIdVenta(venta.idVenta!!)
+        construirRespuesta(venta, detalles)
+    }
+
+    fun buscarPorId(id: UUID): VentaResponse? {
+        val venta = ventaRepository.findById(id).orElse(null) ?: return null
+        val detalles = detalleVentaRepository.findAllByVentaIdVenta(venta.idVenta!!)
+        return construirRespuesta(venta, detalles)
+    }
+
+    @Transactional
+    fun actualizarEstadoEntrega(id: UUID, nuevoEstado: String): VentaResponse? {
+        val venta = ventaRepository.findById(id).orElse(null) ?: return null
+        venta.estadoEntrega = nuevoEstado   // ahora funciona porque estadoEntrega es var
+        val ventaActualizada = ventaRepository.save(venta)
+        val detalles = detalleVentaRepository.findAllByVentaIdVenta(ventaActualizada.idVenta!!)
+        return construirRespuesta(ventaActualizada, detalles)
+    }
+
+    // ---------- MÉTODO PRIVADO REUTILIZABLE ----------
     private fun construirRespuesta(venta: Venta, detalles: List<DetalleVenta>): VentaResponse {
         return VentaResponse(
             idVenta = venta.idVenta!!,

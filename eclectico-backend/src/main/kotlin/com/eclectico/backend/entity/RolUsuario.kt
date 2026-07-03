@@ -12,5 +12,5 @@ data class RolUsuario(
     val idRol: Int? = null,
 
     @Column(nullable = false, unique = true, length = 30)
-    val nombre: String
+    var nombre: String   // ← ahora var
 )

@@ -35,4 +35,13 @@ class ReporteController(private val reporteService: ReporteService) {
     @Operation(summary = "Productos recomendados para un cliente")
     fun productosRecomendados(@PathVariable clienteId: UUID) =
         reporteService.productosRecomendados(clienteId)
+
+    // ---------- NUEVOS ENDPOINTS ----------
+    @GetMapping("/ventas-por-producto")
+    @Operation(summary = "Reporte de ventas agrupadas por producto")
+    fun ventasPorProducto() = reporteService.ventasPorProducto()
+
+    @GetMapping("/clientes-vip")
+    @Operation(summary = "Listado de clientes VIP (segmento V)")
+    fun clientesVIP() = reporteService.clientesVIP()
 }

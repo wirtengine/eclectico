@@ -10,5 +10,5 @@ data class Configuracion(
     val clave: String,
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    val valor: String
+    var valor: String
 )

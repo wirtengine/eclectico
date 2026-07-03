@@ -12,5 +12,5 @@ data class EstadoProducto(
     val idEstado: Int? = null,
 
     @Column(nullable = false, unique = true, length = 20)
-    val nombre: String
+    var nombre: String   // ← ahora var
 )
